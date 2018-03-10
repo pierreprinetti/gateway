@@ -22,6 +22,23 @@ With these environment variables:
 * every `GET` call to `/users/*` will be routed to `http://user_service`;
 * every `PATCH` call to `/users/*` will be forwarded as a NSQ message to the NSQ broker on host `nsqd:4150` with the topic `users`.
 
+## docker-compose
+
+```yaml
+version: '3'
+services:
+  gateway:
+    image: pierreprinetti:gateway
+    environment:
+      PROXY_GET_users: 'http://user_service'
+      PROXY_PATCH_users: 'nsq://nsqd:4150/users'
+    depends_on:
+      - user_service
+      - nsqd
+    ports:
+      - '80:80'
+```
+
 ### NSQ forwarding
 
 The incoming call is packed in a JSON message containing the url and the body of the request.
